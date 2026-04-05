@@ -84,10 +84,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/toolwire.git"
+    "url": "https://github.com/Aaryan-9/toolwire.git"
   },
-  "homepage": "https://github.com/your-username/toolwire#readme",
+  "homepage": "https://aaryan-9.github.io/toolwire/",
   "bugs": {
-    "url": "https://github.com/your-username/toolwire/issues"
+    "url": "https://github.com/Aaryan-9/toolwire/issues"
   }
 }
