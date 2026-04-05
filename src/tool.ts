@@ -27,7 +27,7 @@ export function tool<TInput = unknown, TOutput = unknown>(
 ): ToolDefinition<TInput, TOutput> {
   if (!NAME_RE.test(config.name)) {
     throw new Error(
-      `tool-validate: Invalid tool name "${config.name}". ` +
+      `toolwire: Invalid tool name "${config.name}". ` +
         'Names must be 1–64 characters containing only letters, digits, underscores, or hyphens.',
     );
   }

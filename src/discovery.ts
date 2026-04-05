@@ -23,7 +23,7 @@ export async function fromDir(dirPath: string): Promise<ToolRegistry> {
     files = await readdir(absPath);
   } catch (err) {
     throw new Error(
-      `tool-validate: Cannot read directory "${absPath}": ${err instanceof Error ? err.message : String(err)}`,
+      `toolwire: Cannot read directory "${absPath}": ${err instanceof Error ? err.message : String(err)}`,
     );
   }
 
@@ -37,7 +37,7 @@ export async function fromDir(dirPath: string): Promise<ToolRegistry> {
       discovered.push(...extractTools(mod));
     } catch (err) {
       console.warn(
-        `tool-validate: Skipping "${file}" (failed to import):`,
+        `toolwire: Skipping "${file}" (failed to import):`,
         err instanceof Error ? err.message : err,
       );
     }
@@ -70,13 +70,13 @@ export async function fromManifest(url: string): Promise<ToolRegistry> {
     manifest = (await response.json()) as ToolManifest;
   } catch (err) {
     throw new Error(
-      `tool-validate: Failed to fetch manifest from "${url}": ${err instanceof Error ? err.message : String(err)}`,
+      `toolwire: Failed to fetch manifest from "${url}": ${err instanceof Error ? err.message : String(err)}`,
     );
   }
 
   if (manifest.version !== '1.0' || !Array.isArray(manifest.tools)) {
     throw new Error(
-      'tool-validate: Invalid manifest. Expected { version: "1.0", tools: [...] }',
+      'toolwire: Invalid manifest. Expected { version: "1.0", tools: [...] }',
     );
   }
 

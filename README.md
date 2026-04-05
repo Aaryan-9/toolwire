@@ -1,11 +1,11 @@
-# tool-validate
+# toolwire
 
 Framework-agnostic tool registry for LLM agents.
 
 Define tools **once** with Zod schemas. Get input validation, structured error messages the LLM can act on, and one-line schema export to OpenAI, Anthropic, Gemini, or Vercel AI — with zero runtime dependencies.
 
 ```bash
-npm install tool-validate zod
+npm install toolwire zod
 ```
 
 ---
@@ -18,14 +18,14 @@ Every team building an LLM agent writes the same three pieces of boilerplate:
 2. Validation of the LLM's arguments before calling the function
 3. An error message the LLM can understand and retry
 
-And they do it differently every time, for every framework, in every project. `tool-validate` is the standard.
+And they do it differently every time, for every framework, in every project. `toolwire` is the standard.
 
 ---
 
 ## Quick start
 
 ```typescript
-import { tool, registry } from 'tool-validate';
+import { tool, registry } from 'toolwire';
 import { z } from 'zod';
 
 // 1. Define a tool
@@ -198,7 +198,7 @@ const { text } = await generateText({
 Standalone adapter functions are also exported for use outside a registry:
 
 ```typescript
-import { toOpenAI, toAnthropic, toGemini, toVercelAI } from 'tool-validate';
+import { toOpenAI, toAnthropic, toGemini, toVercelAI } from 'toolwire';
 
 const schemas = toOpenAI([searchWeb, readFile]);
 ```
@@ -349,7 +349,7 @@ const greet = tool({
 Use the inference helpers to extract types from definitions:
 
 ```typescript
-import type { InferInput, InferOutput } from 'tool-validate';
+import type { InferInput, InferOutput } from 'toolwire';
 
 type GreetInput = InferInput<typeof greet>;   // { name: string }
 type GreetOutput = InferOutput<typeof greet>; // { message: string }
@@ -375,7 +375,7 @@ Zod v4 (the default) has built-in JSON Schema generation. For Zod v3 support, in
 npm install zod-to-json-schema
 ```
 
-`tool-validate` detects the Zod version automatically and uses the right conversion path.
+`toolwire` detects the Zod version automatically and uses the right conversion path.
 
 ---
 
@@ -383,7 +383,7 @@ npm install zod-to-json-schema
 
 ```typescript
 import Anthropic from '@anthropic-ai/sdk';
-import { registry, tool } from 'tool-validate';
+import { registry, tool } from 'toolwire';
 import { z } from 'zod';
 
 const searchTool = tool({

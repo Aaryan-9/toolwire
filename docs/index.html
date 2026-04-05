@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tool-validate — Framework-agnostic tool registry for LLM agents</title>
+  <title>toolwire — Framework-agnostic tool registry for LLM agents</title>
   <meta name="description" content="Define LLM tools once with Zod schemas. Validated calls, LLM-readable errors, and one-line schema export to OpenAI, Anthropic, Gemini, or Vercel AI." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -487,8 +487,8 @@
     <li><a href="#api">API</a></li>
     <li><a href="#adapters">Adapters</a></li>
     <li><a href="#middleware">Middleware</a></li>
-    <li><a href="https://github.com/Aaryan-9/tool-validate" target="_blank">GitHub ↗</a></li>
-    <li><a href="https://www.npmjs.com/package/tool-validate" target="_blank"><span class="nav-badge">npm</span></a></li>
+    <li><a href="https://github.com/Aaryan-9/toolwire" target="_blank">GitHub ↗</a></li>
+    <li><a href="https://www.npmjs.com/package/toolwire" target="_blank"><span class="nav-badge">npm</span></a></li>
   </ul>
 </nav>
 
@@ -501,12 +501,12 @@
     </p>
     <div class="install-block">
       <span class="dollar">$</span>
-      <span class="cmd" id="install-cmd">npm install tool-validate zod</span>
+      <span class="cmd" id="install-cmd">npm install toolwire zod</span>
       <button class="copy-btn" onclick="copyInstall()">copy</button>
     </div>
     <div class="hero-actions">
       <a href="#quickstart" class="btn btn-primary">Get started →</a>
-      <a href="https://github.com/Aaryan-9/tool-validate" class="btn btn-ghost" target="_blank">View on GitHub</a>
+      <a href="https://github.com/Aaryan-9/toolwire" class="btn btn-ghost" target="_blank">View on GitHub</a>
     </div>
   </div>
 </div>
@@ -561,7 +561,7 @@
       <thead>
         <tr>
           <th>Feature</th>
-          <th>tool-validate</th>
+          <th>toolwire</th>
           <th>Raw OpenAI API</th>
         </tr>
       </thead>
@@ -611,7 +611,7 @@
 
     <h3 class="mt-6">The invisible bug: schema drift</h3>
     <p class="text-muted text-sm mt-4" style="margin-bottom:16px;">
-      Without tool-validate, your JSON schema (sent to the LLM) and your Zod validation (run in code)
+      Without toolwire, your JSON schema (sent to the LLM) and your Zod validation (run in code)
       are two separate things that must stay in sync manually. They don't.
     </p>
 
@@ -652,7 +652,7 @@ const weatherTool = tool({
     <div class="callout">
       <strong>The compounding problem:</strong> a raw implementation is ~380 lines for 4 tools.
       A real agent has 15–20 tools. Each one adds JSON schema, manual validation, and a router case — all disconnected.
-      tool-validate scales linearly: add a <code>tool({...})</code> call to the array.
+      toolwire scales linearly: add a <code>tool({...})</code> call to the array.
       Registry, middleware, error handling, and all four provider adapters scale for free.
     </div>
   </div>
@@ -664,7 +664,7 @@ const weatherTool = tool({
     <h2>Up in 30 seconds</h2>
     <p class="section-sub">Define a tool, create a registry, call it, export to your provider.</p>
 
-    <pre><code class="language-typescript">import { tool, registry } from 'tool-validate'
+    <pre><code class="language-typescript">import { tool, registry } from 'toolwire'
 import { z } from 'zod'
 
 const searchWeb = tool({
@@ -887,7 +887,7 @@ reg.toAnthropic()            // { name, description, input_schema }
 reg.toGemini()               // { functionDeclarations: [{ name, description, parametersJsonSchema }] }
 reg.toVercelAI()             // { [name]: { description, parameters: ZodSchema } }
 
-import { toOpenAI, toAnthropic } from 'tool-validate'
+import { toOpenAI, toAnthropic } from 'toolwire'
 toOpenAI([searchWeb, readFile])</code></pre>
 
     <table class="adapter-table mt-6">
@@ -967,7 +967,7 @@ reg
     <h2>Types flow end-to-end</h2>
     <p class="section-sub">Input and output types are inferred from your Zod schemas. No manual generics.</p>
 
-    <pre><code class="language-typescript">import type { InferInput, InferOutput } from 'tool-validate'
+    <pre><code class="language-typescript">import type { InferInput, InferOutput } from 'toolwire'
 
 const greet = tool({
   name: 'greet',
@@ -981,7 +981,7 @@ type GreetInput  = InferInput&lt;typeof greet&gt;   // { name: string }
 type GreetOutput = InferOutput&lt;typeof greet&gt;  // { message: string }
 
 // Zod v3: install the optional peer — npm install zod-to-json-schema
-// tool-validate detects the version automatically.</code></pre>
+// toolwire detects the version automatically.</code></pre>
   </div>
 </section>
 
@@ -989,9 +989,9 @@ type GreetOutput = InferOutput&lt;typeof greet&gt;  // { message: string }
   <div class="footer-logo"><span>tool</span>-validator</div>
   <div class="footer-sub">Framework-agnostic tool registry for LLM agents.</div>
   <ul class="footer-links">
-    <li><a href="https://github.com/Aaryan-9/tool-validate" target="_blank">GitHub</a></li>
-    <li><a href="https://www.npmjs.com/package/tool-validate" target="_blank">npm</a></li>
-    <li><a href="https://github.com/Aaryan-9/tool-validate/issues" target="_blank">Issues</a></li>
+    <li><a href="https://github.com/Aaryan-9/toolwire" target="_blank">GitHub</a></li>
+    <li><a href="https://www.npmjs.com/package/toolwire" target="_blank">npm</a></li>
+    <li><a href="https://github.com/Aaryan-9/toolwire/issues" target="_blank">Issues</a></li>
     <li><a href="#quickstart">Quick Start</a></li>
   </ul>
 </footer>

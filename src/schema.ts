@@ -46,7 +46,7 @@ function compute(schema: ZodType): JsonSchema {
     return clean as JsonSchema;
   } catch {
     throw new Error(
-      'tool-validate: Cannot convert Zod schema to JSON Schema.\n' +
+      'toolwire: Cannot convert Zod schema to JSON Schema.\n' +
         '  • Zod v4: ensure zod@^4.0.0 is installed.\n' +
         '  • Zod v3: run `npm install zod-to-json-schema`.\n' +
         '  • Or supply a pre-computed schema via the `_jsonSchema` option in tool().',

@@ -1,5 +1,5 @@
 {
-  "name": "tool-validate",
+  "name": "toolwire",
   "version": "0.1.0",
   "description": "Framework-agnostic tool registry for LLM agents. Define tools with Zod schemas, validate arguments, export to OpenAI, Anthropic, Gemini, or Vercel AI.",
   "type": "module",
@@ -49,7 +49,7 @@
     "llm",
     "tools",
     "tool-registry",
-    "tool-validate",
+    "toolwire",
     "agent",
     "ai-agent",
     "agentic",
@@ -84,10 +84,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/tool-validate.git"
+    "url": "https://github.com/your-username/toolwire.git"
   },
-  "homepage": "https://github.com/your-username/tool-validate#readme",
+  "homepage": "https://github.com/your-username/toolwire#readme",
   "bugs": {
-    "url": "https://github.com/your-username/tool-validate/issues"
+    "url": "https://github.com/your-username/toolwire/issues"
   }
 }
