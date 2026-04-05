@@ -59,7 +59,7 @@ export class ToolRegistry {
    */
   swap(name: string, newTool: AnyTool): this {
     if (!this.tools.has(name)) {
-      throw new Error(`tool-validator: Cannot swap "${name}" — it is not registered.`);
+      throw new Error(`tool-validate: Cannot swap "${name}" — it is not registered.`);
     }
     this.tools.set(name, newTool);
     return this;
@@ -68,7 +68,7 @@ export class ToolRegistry {
   /** Temporarily prevent a tool from being called. */
   disable(name: string): this {
     if (!this.tools.has(name)) {
-      throw new Error(`tool-validator: Cannot disable "${name}" — it is not registered.`);
+      throw new Error(`tool-validate: Cannot disable "${name}" — it is not registered.`);
     }
     this.disabledTools.add(name);
     return this;
@@ -77,7 +77,7 @@ export class ToolRegistry {
   /** Re-enable a previously disabled tool. */
   enable(name: string): this {
     if (!this.tools.has(name)) {
-      throw new Error(`tool-validator: Cannot enable "${name}" — it is not registered.`);
+      throw new Error(`tool-validate: Cannot enable "${name}" — it is not registered.`);
     }
     this.disabledTools.delete(name);
     return this;

@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tool-validate — Framework-agnostic tool registry for LLM agents</title>
+  <meta name="description" content="Define LLM tools once with Zod schemas. Validated calls, LLM-readable errors, and one-line schema export to OpenAI, Anthropic, Gemini, or Vercel AI." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --bg2: #161b22;
+      --bg3: #1c2128;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #7c6af7;
+      --accent-dim: #4f46e5;
+      --accent-glow: rgba(124,106,247,0.15);
+      --green: #3fb950;
+      --red: #f85149;
+      --yellow: #d29922;
+      --radius: 8px;
+      --font: 'Inter', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,17,23,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+    .nav-logo {
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-badge {
+      background: var(--accent);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 0 2rem; }
+    .container-wide { max-width: 1060px; margin: 0 auto; padding: 0 2rem; }
+    section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    .hero {
+      padding: 96px 0 80px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      background: radial-gradient(ellipse 70% 50% at 50% -20%, rgba(124,106,247,0.12), transparent);
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(124,106,247,0.3);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 36px;
+    }
+    .install-block {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 16px;
+      font-family: var(--mono);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+    .install-block .dollar { color: var(--muted); }
+    .install-block .cmd { color: var(--green); }
+    .copy-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      transition: all 0.15s;
+    }
+    .copy-btn:hover { background: var(--bg3); color: var(--text); }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: #6d5ef0; text-decoration: none; }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-ghost:hover { background: var(--bg2); text-decoration: none; }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      padding: 28px 0;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+    }
+    .stat { text-align: center; }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      font-family: var(--mono);
+    }
+    .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .section-sub {
+      color: var(--muted);
+      max-width: 560px;
+      margin-bottom: 40px;
+      font-size: 15px;
+    }
+
+    pre {
+      background: var(--bg2) !important;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    code { font-family: var(--mono); }
+    :not(pre) > code {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.875em;
+      color: #e6edf3;
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .problem-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .problem-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .problem-card h3 { color: var(--text); margin-bottom: 6px; }
+    .problem-card p { font-size: 13px; color: var(--muted); }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 14px;
+    }
+    .comparison-table th {
+      text-align: left;
+      padding: 10px 16px;
+      background: var(--bg3);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+    .comparison-table th:not(:first-child) { text-align: center; }
+    .comparison-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .comparison-table td:not(:first-child) { text-align: center; }
+    .comparison-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .check { color: var(--green); font-size: 16px; }
+    .cross { color: var(--red); font-size: 16px; }
+    .partial { color: var(--yellow); font-size: 13px; }
+
+    .callout {
+      background: rgba(124,106,247,0.08);
+      border: 1px solid rgba(124,106,247,0.25);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .callout strong { color: var(--text); }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+    .feature-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color 0.15s;
+    }
+    .feature-card:hover { border-color: var(--accent); }
+    .feature-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(124,106,247,0.2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    .feature-card h3 { font-size: 14px; margin-bottom: 6px; }
+    .feature-card p { font-size: 13px; color: var(--muted); }
+
+    .api-block {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .api-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg3);
+    }
+    .api-method {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .api-desc { font-size: 13px; color: var(--muted); }
+    .api-body { padding: 16px 20px; }
+    .api-body p { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+
+    .error-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 16px;
+    }
+    .error-table th {
+      text-align: left;
+      padding: 8px 12px;
+      background: var(--bg3);
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+    .error-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .error-table tr:last-child td { border-bottom: none; }
+    .error-code {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: var(--bg3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: var(--accent);
+    }
+    .badge-yes { color: var(--green); font-weight: 600; }
+    .badge-no  { color: var(--red);   font-weight: 600; }
+
+    .adapter-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .adapter-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--bg3);
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+    .adapter-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .adapter-table tr:last-child td { border-bottom: none; }
+    .adapter-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .mono-val {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #79c0ff;
+    }
+
+    .drift-demo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    @media (max-width: 640px) { .drift-demo { grid-template-columns: 1fr; } }
+    .drift-card {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .drift-card-header {
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .drift-card-header.bad  { background: rgba(248,81,73,0.12); color: var(--red); border-bottom: 1px solid rgba(248,81,73,0.2); }
+    .drift-card-header.good { background: rgba(63,185,80,0.10); color: var(--green); border-bottom: 1px solid rgba(63,185,80,0.2); }
+
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-sub { font-size: 13px; color: var(--muted); }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      list-style: none;
+      margin-top: 16px;
+    }
+    .footer-links a { font-size: 13px; color: var(--muted); }
+    .footer-links a:hover { color: var(--text); }
+
+    .mt-4 { margin-top: 16px; }
+    .mt-6 { margin-top: 24px; }
+    .mb-2 { margin-bottom: 8px; }
+    .text-muted { color: var(--muted); }
+    .text-sm { font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><span>tool</span>-validator</div>
+  <ul class="nav-links">
+    <li><a href="#why">Why</a></li>
+    <li><a href="#quickstart">Quick Start</a></li>
+    <li><a href="#api">API</a></li>
+    <li><a href="#adapters">Adapters</a></li>
+    <li><a href="#middleware">Middleware</a></li>
+    <li><a href="https://github.com/your-username/tool-validate" target="_blank">GitHub ↗</a></li>
+    <li><a href="https://www.npmjs.com/package/tool-validate" target="_blank"><span class="nav-badge">npm</span></a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <div class="hero-badge">v0.1.0 · MIT · Zero deps</div>
+    <h1>The tool registry<br /><em>LLM agents</em> actually need</h1>
+    <p class="hero-sub">
+      Define tools once with Zod schemas. Get validated calls, LLM-readable errors,
+      and one-line schema export to OpenAI, Anthropic, Gemini, or Vercel AI.
+    </p>
+    <div class="install-block">
+      <span class="dollar">$</span>
+      <span class="cmd" id="install-cmd">npm install tool-validate zod</span>
+      <button class="copy-btn" onclick="copyInstall()">copy</button>
+    </div>
+    <div class="hero-actions">
+      <a href="#quickstart" class="btn btn-primary">Get started →</a>
+      <a href="https://github.com/your-username/tool-validate" class="btn btn-ghost" target="_blank">View on GitHub</a>
+    </div>
+  </div>
+</div>
+
+<div class="stats-row">
+  <div class="stat">
+    <div class="stat-value">105</div>
+    <div class="stat-label">Tests passing</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">0</div>
+    <div class="stat-label">Runtime dependencies</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">4</div>
+    <div class="stat-label">Provider adapters</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">~800</div>
+    <div class="stat-label">Lines of source</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">ESM+CJS</div>
+    <div class="stat-label">Dual build</div>
+  </div>
+</div>
+
+<section id="why">
+  <div class="container">
+    <p class="section-label">The problem</p>
+    <h2>Every agent project rewrites the same three things</h2>
+    <p class="section-sub">Different code. Every project. Every framework. No standard.</p>
+
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-num">01</div>
+        <h3>JSON schema</h3>
+        <p>Write a schema for each tool, in the format each provider expects — then keep it in sync with your code.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-num">02</div>
+        <h3>Input validation</h3>
+        <p>Validate the LLM's arguments before passing them to your function — separately from the schema definition.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-num">03</div>
+        <h3>Error normalization</h3>
+        <p>Turn handler errors into something the LLM can understand and retry — reinvented every single time.</p>
+      </div>
+    </div>
+
+    <p class="section-label mt-6">The real difference</p>
+    <h2>It's not about line count</h2>
+    <p class="section-sub">
+      The raw version is nearly the same length — because the handlers are identical.
+      The difference is what the raw version is missing.
+    </p>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>tool-validate</th>
+          <th>Raw OpenAI API</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Per-tool timeout enforcement</td>
+          <td><span class="check">✓</span> built in</td>
+          <td><span class="cross">✗</span> slow tool blocks forever</td>
+        </tr>
+        <tr>
+          <td>Retries with exponential backoff</td>
+          <td><span class="check">✓</span> built in</td>
+          <td><span class="cross">✗</span> write your own</td>
+        </tr>
+        <tr>
+          <td>Output validation</td>
+          <td><span class="check">✓</span> Zod schema on return value</td>
+          <td><span class="cross">✗</span> handler returns anything</td>
+        </tr>
+        <tr>
+          <td>Structured error codes</td>
+          <td><span class="check">✓</span> NOT_FOUND, TIMEOUT, VALIDATION…</td>
+          <td><span class="cross">✗</span> plain strings you invent</td>
+        </tr>
+        <tr>
+          <td>LLM-readable error messages</td>
+          <td><span class="check">✓</span> <code>llmMessage</code> on every failure</td>
+          <td><span class="partial">~ whatever your catch block returns</span></td>
+        </tr>
+        <tr>
+          <td>Middleware (logging, auth, cache)</td>
+          <td><span class="check">✓</span> 3 lines to plug in</td>
+          <td><span class="cross">✗</span> weave it through every handler</td>
+        </tr>
+        <tr>
+          <td>Provider format switching</td>
+          <td><span class="check">✓</span> <code>reg.toAnthropic()</code> etc.</td>
+          <td><span class="cross">✗</span> rewrite all schemas</td>
+        </tr>
+        <tr>
+          <td>Hot-swap tools at runtime</td>
+          <td><span class="check">✓</span> <code>reg.swap()</code></td>
+          <td><span class="cross">✗</span> restart the process</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="mt-6">The invisible bug: schema drift</h3>
+    <p class="text-muted text-sm mt-4" style="margin-bottom:16px;">
+      Without tool-validate, your JSON schema (sent to the LLM) and your Zod validation (run in code)
+      are two separate things that must stay in sync manually. They don't.
+    </p>
+
+    <div class="drift-demo">
+      <div class="drift-card">
+        <div class="drift-card-header bad">✗ Two sources of truth</div>
+        <pre><code class="language-typescript">// JSON schema sent to the LLM
+const schema = {
+  parameters: {
+    properties: {
+      city: { type: 'string' }
+    },
+    required: ['city']
+  }
+}
+
+// Zod validation — written separately.
+// Add a field? Update both. Easy to forget.
+const args = validateCity(rawArgs)</code></pre>
+      </div>
+      <div class="drift-card">
+        <div class="drift-card-header good">✓ One source of truth</div>
+        <pre><code class="language-typescript">// One Zod schema. That's it.
+const weatherTool = tool({
+  name: 'get_weather',
+  input: z.object({
+    city: z.string().min(1),
+  }),
+  handler: async ({ city }) => { ... }
+})
+
+// JSON schema auto-computed from Zod.
+// Validation runs from the same schema.
+// Change one thing. Everything stays in sync.</code></pre>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>The compounding problem:</strong> a raw implementation is ~380 lines for 4 tools.
+      A real agent has 15–20 tools. Each one adds JSON schema, manual validation, and a router case — all disconnected.
+      tool-validate scales linearly: add a <code>tool({...})</code> call to the array.
+      Registry, middleware, error handling, and all four provider adapters scale for free.
+    </div>
+  </div>
+</section>
+
+<section id="quickstart">
+  <div class="container">
+    <p class="section-label">Quick start</p>
+    <h2>Up in 30 seconds</h2>
+    <p class="section-sub">Define a tool, create a registry, call it, export to your provider.</p>
+
+    <pre><code class="language-typescript">import { tool, registry } from 'tool-validate'
+import { z } from 'zod'
+
+const searchWeb = tool({
+  name: 'search_web',
+  description: 'Search the web for current information',
+  input: z.object({
+    query: z.string().min(1).describe('The search query'),
+    maxResults: z.number().int().min(1).max(20).default(5),
+  }),
+  handler: async ({ query, maxResults }) => {
+    return await mySearchAPI(query, maxResults)
+  },
+  timeout: 10_000,
+  retries: 2,
+})
+
+const reg = registry([searchWeb, readFile, writeFile])
+
+const tools = reg.toAnthropic()  // or toOpenAI(), toGemini(), toVercelAI()
+
+const result = await reg.call(llmToolCall)
+
+if (result.success) {
+  messages.push({ role: 'tool', content: JSON.stringify(result.data) })
+} else {
+  messages.push({ role: 'tool', content: result.error.llmMessage })
+}</code></pre>
+  </div>
+</section>
+
+<section id="features">
+  <div class="container">
+    <p class="section-label">Features</p>
+    <h2>Everything your agent loop needs</h2>
+    <p class="section-sub">Built-in. No configuration required for the happy path.</p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Input + output validation</h3>
+        <p>Zod schema validates arguments in. Optional output schema validates results out. Errors always include the full Zod issue tree.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3>Timeout + retries</h3>
+        <p>Per-tool timeout with AbortSignal for cooperative cancellation. Exponential backoff retries on execution failures.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <h3>LLM-readable errors</h3>
+        <p>Every failure has a <code>llmMessage</code> field — formatted to tell the model exactly what went wrong and how to fix it.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔌</div>
+        <h3>Four provider adapters</h3>
+        <p>Export tool schemas to OpenAI, Anthropic, Google Gemini, or Vercel AI SDK in a single method call.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Middleware</h3>
+        <p><code>beforeCall</code> / <code>afterCall</code> / <code>onError</code> hooks for logging, auth, caching, and tracing. Composable and chainable.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔀</div>
+        <h3>Hot-swap</h3>
+        <p>Replace a tool at runtime without restarting the agent. Swap a slow tool for a cached version mid-run.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📁</div>
+        <h3>Runtime discovery</h3>
+        <p>Load tools from a directory of JS files or a remote JSON manifest. Build dynamic, self-extending agents.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Zero dependencies</h3>
+        <p>Zod is a peer dependency. Everything else is built-in. No supply chain surprises.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="api">
+  <div class="container">
+    <p class="section-label">API reference</p>
+    <h2>Small surface. Full control.</h2>
+    <p class="section-sub">Three entry points cover every use case.</p>
+
+    <div class="api-block">
+      <div class="api-header">
+        <span class="api-method">tool(config)</span>
+        <span class="api-desc">— Define a tool. Returns a frozen ToolDefinition.</span>
+      </div>
+      <div class="api-body">
+        <pre><code class="language-typescript">const myTool = tool({
+  name: 'my_tool',          // 1–64 chars: letters, digits, _ or -
+  description: string,      // shown to the LLM — explain when to call this
+  input: ZodSchema,         // validates LLM arguments
+  output?: ZodSchema,       // optional — validates handler return value
+  handler: async (input, context) => { ... },
+  timeout?: number,         // ms, default 30_000
+  retries?: number,         // extra attempts on execution failure, default 0
+  annotations?: {
+    readOnly?: boolean,
+    destructive?: boolean,
+    expensive?: boolean,
+  },
+})</code></pre>
+        <p>The <code>context</code> object passed to every handler:</p>
+        <pre><code class="language-typescript">interface ToolContext {
+  signal: AbortSignal // tied to the timeout
+  attempt: number     // 0 = first try, 1 = first retry, …
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="api-block">
+      <div class="api-header">
+        <span class="api-method">registry(tools, options?)</span>
+        <span class="api-desc">— Create a ToolRegistry.</span>
+      </div>
+      <div class="api-body">
+        <pre><code class="language-typescript">const reg = registry([searchWeb, readFile, writeFile], {
+  defaultTimeout: 15_000,
+})</code></pre>
+      </div>
+    </div>
+
+    <div class="api-block">
+      <div class="api-header">
+        <span class="api-method">reg.call(request)</span>
+        <span class="api-desc">— Execute a tool call. Always resolves — never throws.</span>
+      </div>
+      <div class="api-body">
+        <pre><code class="language-typescript">const result = await reg.call({ name: 'search_web', arguments: { query: 'hello' } })
+
+if (result.success) {
+  result.data        // validated return value
+  result.durationMs  // wall time
+} else {
+  result.error.code       // error category (see table below)
+  result.error.message    // developer-readable
+  result.error.llmMessage // formatted for the LLM to retry
+  result.error.retryable  // boolean
+  result.error.issues     // Zod issue array (VALIDATION_* errors only)
+}</code></pre>
+
+        <table class="error-table mt-4">
+          <thead>
+            <tr><th>Code</th><th>When it fires</th><th>Retryable</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="error-code">NOT_FOUND</span></td>
+              <td>Tool name not in registry</td>
+              <td><span class="badge-yes">yes</span></td>
+            </tr>
+            <tr>
+              <td><span class="error-code">DISABLED</span></td>
+              <td>Tool is currently disabled</td>
+              <td><span class="badge-no">no</span></td>
+            </tr>
+            <tr>
+              <td><span class="error-code">VALIDATION_INPUT</span></td>
+              <td>Arguments fail Zod schema</td>
+              <td><span class="badge-yes">yes</span></td>
+            </tr>
+            <tr>
+              <td><span class="error-code">VALIDATION_OUTPUT</span></td>
+              <td>Return value fails output schema</td>
+              <td><span class="badge-no">no</span></td>
+            </tr>
+            <tr>
+              <td><span class="error-code">TIMEOUT</span></td>
+              <td>Handler exceeded timeout</td>
+              <td><span class="badge-yes">yes</span></td>
+            </tr>
+            <tr>
+              <td><span class="error-code">EXECUTION</span></td>
+              <td>Handler threw, all retries exhausted</td>
+              <td><span class="badge-no">no</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="api-block">
+      <div class="api-header">
+        <span class="api-method">reg.swap / enable / disable / use / describe</span>
+      </div>
+      <div class="api-body">
+        <pre><code class="language-typescript">reg.register(newTool)           // add a tool at runtime
+reg.swap('search_web', v2Tool)  // hot-replace a registered tool
+reg.disable('send_email')       // block a tool (returns DISABLED if called)
+reg.enable('send_email')        // re-enable it
+reg.use(middleware)             // add middleware
+reg.list()                      // → ['search_web', 'read_file', ...]
+reg.get('search_web')           // → ToolDefinition | undefined
+reg.describe()                  // → human-readable summary for system prompts
+
+const reg = await ToolRegistry.fromDir('./tools/')
+const reg = await ToolRegistry.fromManifest('https://tools.myco.com/manifest.json')</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="adapters">
+  <div class="container">
+    <p class="section-label">Provider adapters</p>
+    <h2>One definition. Every provider.</h2>
+    <p class="section-sub">
+      Each adapter reads the pre-computed JSON Schema from your tool definitions.
+      No re-conversion. No format drift. Disabled tools are always excluded.
+    </p>
+
+    <pre><code class="language-typescript">reg.toOpenAI()               // { type: 'function', function: { name, description, parameters } }
+reg.toOpenAI({ strict: true })
+reg.toAnthropic()            // { name, description, input_schema }
+reg.toGemini()               // { functionDeclarations: [{ name, description, parametersJsonSchema }] }
+reg.toVercelAI()             // { [name]: { description, parameters: ZodSchema } }
+
+import { toOpenAI, toAnthropic } from 'tool-validate'
+toOpenAI([searchWeb, readFile])</code></pre>
+
+    <table class="adapter-table mt-6">
+      <thead>
+        <tr>
+          <th>Provider</th>
+          <th>Method</th>
+          <th>Schema key</th>
+          <th>Wrapper</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>OpenAI</td>
+          <td><span class="mono-val">toOpenAI()</span></td>
+          <td><span class="mono-val">parameters</span></td>
+          <td><code>{ type: "function", function: {...} }</code></td>
+        </tr>
+        <tr>
+          <td>Anthropic</td>
+          <td><span class="mono-val">toAnthropic()</span></td>
+          <td><span class="mono-val">input_schema</span></td>
+          <td>Direct object array</td>
+        </tr>
+        <tr>
+          <td>Google Gemini</td>
+          <td><span class="mono-val">toGemini()</span></td>
+          <td><span class="mono-val">parametersJsonSchema</span></td>
+          <td><code>{ functionDeclarations: [...] }</code></td>
+        </tr>
+        <tr>
+          <td>Vercel AI SDK</td>
+          <td><span class="mono-val">toVercelAI()</span></td>
+          <td>Zod schema directly</td>
+          <td><code>Record&lt;name, { description, parameters }&gt;</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="middleware">
+  <div class="container">
+    <p class="section-label">Middleware</p>
+    <h2>Plug in observability in 3 lines</h2>
+    <p class="section-sub">
+      Hooks run before and after every tool call. Multiple middleware chain in order for
+      <code>beforeCall</code>, reverse order for <code>afterCall</code>.
+    </p>
+
+    <pre><code class="language-typescript">reg.use({
+  name: 'logger',
+  beforeCall: (toolName, args) => {
+    console.log(`→ ${toolName}`, args)
+    span.start(toolName)
+  },
+  afterCall: (toolName, args, result) => {
+    span.end(toolName, result.durationMs)
+    metrics.record(toolName, result.data)
+  },
+  onError: (toolName, args, failure) => {
+    alerting.send(toolName, failure.error)
+    // return a ToolResult here to recover silently
+  },
+})
+
+reg
+  .use({ name: 'auth',    beforeCall: checkToken })
+  .use({ name: 'cache',   beforeCall: checkCache, afterCall: writeCache })
+  .use({ name: 'metrics', afterCall: recordMetrics })</code></pre>
+  </div>
+</section>
+
+<section id="typescript">
+  <div class="container">
+    <p class="section-label">TypeScript</p>
+    <h2>Types flow end-to-end</h2>
+    <p class="section-sub">Input and output types are inferred from your Zod schemas. No manual generics.</p>
+
+    <pre><code class="language-typescript">import type { InferInput, InferOutput } from 'tool-validate'
+
+const greet = tool({
+  name: 'greet',
+  description: 'Greet someone',
+  input: z.object({ name: z.string() }),
+  output: z.object({ message: z.string() }),
+  handler: async ({ name }) => ({ message: `Hello, ${name}!` }),
+})
+
+type GreetInput  = InferInput&lt;typeof greet&gt;   // { name: string }
+type GreetOutput = InferOutput&lt;typeof greet&gt;  // { message: string }
+
+// Zod v3: install the optional peer — npm install zod-to-json-schema
+// tool-validate detects the version automatically.</code></pre>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo"><span>tool</span>-validator</div>
+  <div class="footer-sub">Framework-agnostic tool registry for LLM agents.</div>
+  <ul class="footer-links">
+    <li><a href="https://github.com/your-username/tool-validate" target="_blank">GitHub</a></li>
+    <li><a href="https://www.npmjs.com/package/tool-validate" target="_blank">npm</a></li>
+    <li><a href="https://github.com/your-username/tool-validate/issues" target="_blank">Issues</a></li>
+    <li><a href="#quickstart">Quick Start</a></li>
+  </ul>
+</footer>
+
+<script>
+  hljs.highlightAll()
+
+  function copyInstall() {
+    const text = document.getElementById('install-cmd').textContent
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn')
+      btn.textContent = 'copied!'
+      setTimeout(() => btn.textContent = 'copy', 1500)
+    })
+  }
+</script>
+</body>
+</html>
