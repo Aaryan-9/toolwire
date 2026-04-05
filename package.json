@@ -1,0 +1,93 @@
+{
+  "name": "tool-validator",
+  "version": "0.1.0",
+  "description": "Framework-agnostic tool registry for LLM agents. Define tools with Zod schemas, validate arguments, export to OpenAI, Anthropic, Gemini, or Vercel AI.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm run build && npm test"
+  },
+  "peerDependencies": {
+    "zod": "^3.22.0 || ^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "zod": {
+      "optional": false
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.5.0",
+    "vitest": "^3.0.0",
+    "zod": "^4.3.0"
+  },
+  "keywords": [
+    "llm",
+    "tools",
+    "tool-registry",
+    "tool-validator",
+    "agent",
+    "ai-agent",
+    "agentic",
+    "openai",
+    "anthropic",
+    "claude",
+    "gemini",
+    "gpt",
+    "gpt-4",
+    "vercel-ai",
+    "vercel-ai-sdk",
+    "function-calling",
+    "tool-use",
+    "tool-calling",
+    "zod",
+    "validation",
+    "schema",
+    "json-schema",
+    "ai",
+    "generative-ai",
+    "framework-agnostic",
+    "typescript",
+    "middleware",
+    "error-handling",
+    "llm-tools",
+    "ai-tools",
+    "rag",
+    "chatbot",
+    "hot-swap",
+    "runtime-discovery"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/tool-validator.git"
+  },
+  "homepage": "https://github.com/your-username/tool-validator#readme",
+  "bugs": {
+    "url": "https://github.com/your-username/tool-validator/issues"
+  }
+}
